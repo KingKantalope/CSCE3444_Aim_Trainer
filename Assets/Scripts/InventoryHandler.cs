@@ -27,9 +27,9 @@ public class InventoryHandler : MonoBehaviour
     [SerializeField] private GameObject frag;
     [SerializeField] private GameObject mover;
     [SerializeField] private GameObject caustic;
-    [SerializeField] private int resFrag;
-    [SerializeField] private int resMover;
-    [SerializeField] private int resCaustic;
+    [SerializeField] private int reserveFrag;
+    [SerializeField] private int reserveMover;
+    [SerializeField] private int reserveCaustic;
     private int activeGrenade;
 
     [Header("Equipment")]
@@ -64,11 +64,11 @@ public class InventoryHandler : MonoBehaviour
         Debug.Log("canSwap: " + canSwap);
 
         // find available grenades in inventory
-        if (resFrag > 0)
+        if (reserveFrag > 0)
             activeGrenade = 0;
-        else if (resMover > 0)
+        else if (reserveMover > 0)
             activeGrenade = 1;
-        else if (resCaustic > 0)
+        else if (reserveCaustic > 0)
             activeGrenade = 2;
         else
             activeGrenade = 3; // no selected grenade
@@ -88,30 +88,33 @@ public class InventoryHandler : MonoBehaviour
     void Update()
     {
         // weapon swapping
-        if (isSwapping)
+        // swap between weapons 1 & 2 when button is tapped
+        // swap to/from sidearm when button is held
+        if (isSwapping) // if the player is holding down the swap button
         {
+            // add to hold time if less than the minimum required to swap to sidearm
             if (currentSwapTime < minimumSwapTime)
                 currentSwapTime += Time.deltaTime;
-            else
+            else // if it is greater, end swapping and swap to/from sidearm
             {
                 isSwapping = false;
 
-                if (activeWeapon == 2)
-                    nextWeapon = 0;
+                if (activeWeapon == 2) // is sidearm
+                    nextWeapon = 0; // to weapon 1
                 else
-                    nextWeapon = 2;
+                    nextWeapon = 2; // to sidearm
 
-                SwapWeapon();
+                SwapWeapon(); // perform weapon swap
             }
         }
-        else if (currentSwapTime > 0.0f)
+        else if (currentSwapTime > 0.0f) // let go of swap button early
         {
-            if (activeWeapon == 0)
-                nextWeapon = 1;
+            if (activeWeapon == 0) // is weapon 1
+                nextWeapon = 1; // to weapon 2
             else
-                nextWeapon = 0;
+                nextWeapon = 0; // to weapon 1
 
-            SwapWeapon();
+            SwapWeapon(); // perform weapon swap
         }
 
         // reload or use
@@ -176,8 +179,12 @@ public class InventoryHandler : MonoBehaviour
     public void SwapToSidearm()
     {
         if (activeWeapon != 2)
+        {
             nextWeapon = 2;
+            SwapWeapon();
+        }
     }
+
     private void SwapWeapon()
     {
 
@@ -202,25 +209,32 @@ public class InventoryHandler : MonoBehaviour
     // switch to the next grenade or do nothing
     public void NextGrenade()
     {
+        // check the other two grenade types in order for available
         switch (activeGrenade)
         {
             case 1:
-                if (resMover > 0)
+                if (reserveMover > 0) // next grenade
                     activeGrenade = 2;
-                else if (resCaustic > 0)
+                else if (reserveCaustic > 0) // next, next grenade
                     activeGrenade = 3;
+                else if (reserveFrag == 0) // no grenades
+                    activeGrenade = 4;
                 break;
             case 2:
-                if (resCaustic > 0)
+                if (reserveCaustic > 0) // next grenade
                     activeGrenade = 3;
-                else if (resFrag > 0)
+                else if (reserveFrag > 0) // next, next grenade
                     activeGrenade = 1;
+                else if (reserveMover == 0) // no grenades
+                    activeGrenade = 4;
                 break;
             case 3:
-                if (resFrag > 0)
+                if (reserveFrag > 0) // next grenade
                     activeGrenade = 1;
-                else if (resMover > 0)
+                else if (reserveMover > 0) // next, next grenade
                     activeGrenade = 2;
+                else if (reserveCaustic == 0) // no grenades
+                    activeGrenade = 4;
                 break;
         }
     }

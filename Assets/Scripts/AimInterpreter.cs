@@ -62,26 +62,28 @@ public class AimInterpreter : MonoBehaviour
     void Update()
     {
         // mouse aim
-        Vector2 aimMouse = new Vector2(lookInputMouse.x * aimSensX, lookInputMouse.y * aimSensY) * Time.fixedDeltaTime;
-        xRotation -= aimMouse.y;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-        playerBody.Rotate(Vector3.up * aimMouse.x);
-        playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        moveAim(lookInputMouse);
 
         // gamepad acceleration
         if (gamepadInput)
         {
-            aimAccelModGamepad += (((aimMaxGamepad - 1.0f) * Time.fixedDeltaTime) * aimAccelGamepad);
-            float max = 1 + (lookInputGamepad.magnitude * (aimMaxGamepad - 1));
-            aimAccelModGamepad = Mathf.Clamp(aimAccelModGamepad, 1.0f, max);
+            // get modifier relative to input magnitude
+            aimAccelModGamepad += (((aimMaxGamepad - 1.0f) * Time.fixedDeltaTime) * aimAccelGamepad); // accelerate aim
+            float max = 1 + (lookInputGamepad.magnitude * (aimMaxGamepad - 1)); // get upper accel limit
+            aimAccelModGamepad = Mathf.Clamp(aimAccelModGamepad, 1.0f, max); // clamp acceleration between 1 and said max
         }
-        else aimAccelModGamepad = 1.0f;
+        else aimAccelModGamepad = 1.0f; // reset look acceleration of gamepad
 
-        // gamepad aim
-        Vector2 aimGamepad = new Vector2(lookInputGamepad.x * aimSensX, lookInputGamepad.y * aimSensY) * aimAccelModGamepad * Time.fixedDeltaTime;
-        xRotation -= aimGamepad.y;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-        playerBody.Rotate(Vector3.up * aimGamepad.x);
-        playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        // gamepad aim with acceleration modifier
+        moveAim(lookInputGamepad * aimAccelModGamepad);
+    }
+
+    private void moveAim(Vector2 input)
+    {
+        Vector2 aim = new Vector2(input.x * aimSensX, input.y * aimSensY) * Time.fixedDeltaTime; // get amount to move for next frame
+        xRotation -= aim.y; // apply up/down camera rotation
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // don't let player look beyond straight down and straight up
+        playerBody.Rotate(Vector3.up * aim.x); // apply left/right player rotation
+        playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f); // clamp up/down rotation from going to high or low
     }
 }

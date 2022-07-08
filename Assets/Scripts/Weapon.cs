@@ -37,6 +37,11 @@ public abstract class Weapon : MonoBehaviour
     [Header("Grenades and Horseshoes")]
     [SerializeField] private float throwAndMeleeTime;
 
+    private void Awake()
+    {
+        inventory = GetComponentInParent<InventoryHandler>(); // get inventory
+    }
+
     // Start is called before the first frame update
     void Start()
     {
