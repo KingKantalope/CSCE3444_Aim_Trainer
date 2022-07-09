@@ -124,31 +124,31 @@ public class InventoryHandler : MonoBehaviour
     // Start firing active Weapon
     public void StartFireWeapon()
     {
-        weapons[activeWeapon].GetComponent<Weapon>().StartFiring();
+        weapons[activeWeapon].GetComponent<Gun>().StartFiring();
     }
 
     // Stop firing active weapon
     public void StopFireWeapon()
     {
-        weapons[activeWeapon].GetComponent<Weapon>().StopFiring();
+        weapons[activeWeapon].GetComponent<Gun>().StopFiring();
     }
 
     // start alt-firing active weapon
     public void StartAltFireWeapon()
     {
-        weapons[activeWeapon].GetComponent<Weapon>().StartAltFiring();
+        weapons[activeWeapon].GetComponent<Gun>().StartAltFiring();
     }
 
     // stop alt-firing active weapon
     public void StopAltFireWeapon()
     {
-        weapons[activeWeapon].GetComponent<Weapon>().StopAltFiring();
+        weapons[activeWeapon].GetComponent<Gun>().StopAltFiring();
     }
 
     // stop alt-firing active weapon
     private void ReloadWeapon()
     {
-        weapons[activeWeapon].GetComponent<Weapon>().Reload();
+        weapons[activeWeapon].GetComponent<Gun>().Reload();
     }
 
     // start hold reload
@@ -212,29 +212,39 @@ public class InventoryHandler : MonoBehaviour
         // check the other two grenade types in order for available
         switch (activeGrenade)
         {
-            case 1:
+            case 0:
                 if (reserveMover > 0) // next grenade
-                    activeGrenade = 2;
+                    activeGrenade = 1;
                 else if (reserveCaustic > 0) // next, next grenade
-                    activeGrenade = 3;
+                    activeGrenade = 2;
                 else if (reserveFrag == 0) // no grenades
-                    activeGrenade = 4;
+                    activeGrenade = 3;
+                break;
+            case 1:
+                if (reserveCaustic > 0) // next grenade
+                    activeGrenade = 2;
+                else if (reserveFrag > 0) // next, next grenade
+                    activeGrenade = 0;
+                else if (reserveMover == 0) // no grenades
+                    activeGrenade = 3;
                 break;
             case 2:
-                if (reserveCaustic > 0) // next grenade
-                    activeGrenade = 3;
-                else if (reserveFrag > 0) // next, next grenade
-                    activeGrenade = 1;
-                else if (reserveMover == 0) // no grenades
-                    activeGrenade = 4;
-                break;
-            case 3:
                 if (reserveFrag > 0) // next grenade
-                    activeGrenade = 1;
+                    activeGrenade = 0;
                 else if (reserveMover > 0) // next, next grenade
-                    activeGrenade = 2;
+                    activeGrenade = 1;
                 else if (reserveCaustic == 0) // no grenades
-                    activeGrenade = 4;
+                    activeGrenade = 3;
+                break;
+            default:
+                if (reserveFrag > 0) // frag grenade
+                    activeGrenade = 0;
+                else if (reserveMover > 0) // mover charge
+                    activeGrenade = 1;
+                else if (reserveCaustic == 0) // caustic canister
+                    activeGrenade = 2;
+                else
+                    activeGrenade = 3; // no grenades
                 break;
         }
     }

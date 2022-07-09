@@ -2,14 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Weapon : MonoBehaviour
+public abstract class Gun : Item
 {
     // references
     private Transform firePoint;
     private InventoryHandler inventory;
-    [Header("Name and Info")]
-    [SerializeField] private string weaponName = "Dingus";
-    [SerializeField] private bool isSidearm = false;
 
     [Header("Fire Action")]
     [SerializeField] private float fireRateBase;
@@ -40,6 +37,8 @@ public abstract class Weapon : MonoBehaviour
     private void Awake()
     {
         inventory = GetComponentInParent<InventoryHandler>(); // get inventory
+
+        // define size of collider based on weapon model size
     }
 
     // Start is called before the first frame update
