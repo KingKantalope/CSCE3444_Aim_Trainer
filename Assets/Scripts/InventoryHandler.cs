@@ -5,11 +5,7 @@ using UnityEngine;
 public class InventoryHandler : MonoBehaviour
 {
     [Header("Weapons")]
-    [SerializeField] private GameObject[] weapons = new GameObject[3]; // weapon1 = 0, weapon2 = 1, sidearm = 2
-    [SerializeField] private GameObject weapon1 = null;
-    [SerializeField] private GameObject weapon2 = null;
-    [SerializeField] private GameObject sidearm = null;
-    [SerializeField] private GameObject backUpWeapon = null;
+    [SerializeField] private GameObject[] weapons = new GameObject[4]; // weapon1 = 0, weapon2 = 1, sidearm = 2, backup = 3
     private int activeWeapon;
     private int nextWeapon;
 
@@ -23,10 +19,9 @@ public class InventoryHandler : MonoBehaviour
     private bool isHoldingReload = false;
 
     [Header("Grenades")]
-    [SerializeField] private GameObject[] grenades = new GameObject[3]; // frag = 0, mover = 1, caustic = 2
-    [SerializeField] private GameObject frag;
-    [SerializeField] private GameObject mover;
-    [SerializeField] private GameObject caustic;
+    [SerializeField] private GameObject fragObject;
+    [SerializeField] private GameObject moverObject;
+    [SerializeField] private GameObject causticObject;
     [SerializeField] private int reserveFrag;
     [SerializeField] private int reserveMover;
     [SerializeField] private int reserveCaustic;
@@ -57,7 +52,7 @@ public class InventoryHandler : MonoBehaviour
         // determine if canSwap
         if (activeWeapon < 3)
         {
-            if (sidearm || (weapon1 && weapon2))
+            if (weapons[2] || (weapons[0] && weapons[1]))
                 canSwap = true;
         }
 
@@ -154,13 +149,13 @@ public class InventoryHandler : MonoBehaviour
     // start hold reload
     public void StartReload()
     {
-
+        isHoldingReload = true;
     }
 
     // start hold reload
     public void StopReload()
     {
-
+        isHoldingReload = false;
     }
 
     // start swapping weapon input

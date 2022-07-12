@@ -19,6 +19,8 @@ public abstract class Item : MonoBehaviour
     {
 
     }
+    
+    public ItemType ItemType() { return type; }
 }
 
 // describes the types of items that can exist

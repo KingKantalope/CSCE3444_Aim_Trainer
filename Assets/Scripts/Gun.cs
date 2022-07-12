@@ -11,10 +11,10 @@ public abstract class Gun : Item
     [Header("Fire Action")]
     [SerializeField] private float fireRateBase;
     [SerializeField] private bool isFullAuto;
-    [SerializeField] private float fireRateBurst;
-    [SerializeField] private int firePerBurst;
     [SerializeField] private GameObject projectile;
     private bool canFire;
+    private bool isTriggered;
+    private bool isTriggerReset;
 
     [Header("Ammo")]
     [SerializeField] private int resMax;
@@ -37,8 +37,6 @@ public abstract class Gun : Item
     private void Awake()
     {
         inventory = GetComponentInParent<InventoryHandler>(); // get inventory
-
-        // define size of collider based on weapon model size
     }
 
     // Start is called before the first frame update
@@ -53,30 +51,62 @@ public abstract class Gun : Item
         
     }
 
-    public void StartFiring()
+    public virtual void StartFiring()
     {
+        // let gun know that it should fire when it next can
+        isTriggered = true;
+        // fire if gun is ready and has ammo
         if (canFire)
-        {
+            Fire();
+    }
 
+    public virtual void StopFiring()
+    {
+        // let gun know it shouldn't fire
+        isTriggered = false;
+        isTriggerReset = true;
+    }
+
+    protected virtual void Fire()
+    {
+        // only fire if ammo is available
+        if (magCurrent > 0)
+        {
+            // spawn projectile in correct orientation
+            Instantiate(projectile, firePoint);
+            // provent gun from firing immediately
+            canFire = false;
+            if (!isFullAuto)
+                isTriggerReset = false;
+            // start fire delay
+            Invoke("ReadyToFire", fireRateBase);
+        }
+        else
+        {
+            // stuff to notify empty mag
         }
     }
 
-    public void StopFiring()
+    protected virtual void ReadytoFire()
+    {
+        // let gun be able to fire
+        canFire = true;
+        // fire if the trigger is pulled
+        if (isTriggered && isTriggerReset)
+            Fire();
+    }
+
+    public virtual void StartAltFiring()
     {
 
     }
 
-    public void StartAltFiring()
+    public virtual void StopAltFiring()
     {
 
     }
 
-    public void StopAltFiring()
-    {
-
-    }
-
-    public void Reload()
+    public virtual void Reload()
     {
         // check if there is ammo to add
         // otherwise play little animation
@@ -108,7 +138,7 @@ public abstract class Gun : Item
         }
     }
 
-    private void AddAmmo()
+    protected virtual void AddAmmo()
     {
         // add ammo to mag & remove ammo from reserves
         if (resCurrent < resToRemove)
@@ -121,11 +151,6 @@ public abstract class Gun : Item
             magCurrent = magMax;
             resCurrent -= resToRemove;
         }
-    }
-
-    private void ReadytoFire()
-    {
-
     }
 
     public void Equip()
