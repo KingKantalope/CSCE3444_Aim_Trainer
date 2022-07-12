@@ -12,9 +12,10 @@ public abstract class Gun : Item
     [SerializeField] private float fireRateBase;
     [SerializeField] private bool isFullAuto;
     [SerializeField] private GameObject projectile;
-    private bool canFire;
-    private bool isTriggered;
-    private bool isTriggerReset;
+    private bool canFire = false;
+    private bool isTriggered = false;
+    private bool isTriggerReset = true;
+    private bool hasAltFire = false;
 
     [Header("Ammo")]
     [SerializeField] private int resMax;
@@ -96,14 +97,14 @@ public abstract class Gun : Item
             Fire();
     }
 
-    public virtual void StartAltFiring()
+    public virtual void StartAltFiring(bool isToggle)
     {
-
+        // leave blank as at least one gun doesn't need this
     }
 
-    public virtual void StopAltFiring()
+    public virtual void StopAltFiring(bool isToggle)
     {
-
+        // leave blank as at least one gun doesn't need this
     }
 
     public virtual void Reload()

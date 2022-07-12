@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     private PlayerControls controls;
     private InventoryHandler inventory;
     private Vector2 moveInput;
+    private bool isAimToggle;
+    private bool isCrouchToggle;
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +19,7 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         movePhysics = GetComponent<PhysicsHandler>();
         aimInt = GetComponent<AimInterpreter>();
+        inventory = GetComponent<InventoryHandler>();
     }
 
     private void Awake()
@@ -40,8 +43,8 @@ public class PlayerController : MonoBehaviour
         controls.FirstPersonStuff.Reload.canceled += ctx => inventory.StopReload();
 
         // Update script on whether the player wants to swap weapons
-        controls.FirstPersonStuff.SwapWeapon.performed += ctx => inventory.StartSwappingWeapon();
-        controls.FirstPersonStuff.SwapWeapon.canceled += ctx => inventory.StopSwappingWeapon();
+        controls.FirstPersonStuff.SwapWeapon.performed += ctx => inventory.StartSwappingWeapon(isAimToggle);
+        controls.FirstPersonStuff.SwapWeapon.canceled += ctx => inventory.StopSwappingWeapon(isAimToggle);
 
         // Update script on whether the player wants to use equipment
         controls.FirstPersonStuff.SwapSidearm.performed += ctx => inventory.SwapToSidearm();
@@ -75,5 +78,11 @@ public class PlayerController : MonoBehaviour
     {
         if (moveInput != Vector2.zero)
             movePhysics.LateralMove(moveInput);
+    }
+
+    public void ControlSettings(bool crouch, bool aim)
+    {
+        isAimToggle = aim;
+        isCrouchToggle = crouch;
     }
 }

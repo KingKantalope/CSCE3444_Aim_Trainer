@@ -129,15 +129,15 @@ public class InventoryHandler : MonoBehaviour
     }
 
     // start alt-firing active weapon
-    public void StartAltFireWeapon()
+    public void StartAltFireWeapon(bool isToggle)
     {
-        weapons[activeWeapon].GetComponent<Gun>().StartAltFiring();
+        weapons[activeWeapon].GetComponent<Gun>().StartAltFiring(isToggle);
     }
 
     // stop alt-firing active weapon
-    public void StopAltFireWeapon()
+    public void StopAltFireWeapon(bool isToggle)
     {
-        weapons[activeWeapon].GetComponent<Gun>().StopAltFiring();
+        weapons[activeWeapon].GetComponent<Gun>().StopAltFiring(isToggle);
     }
 
     // stop alt-firing active weapon
