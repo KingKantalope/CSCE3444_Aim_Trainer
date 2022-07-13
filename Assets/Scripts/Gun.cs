@@ -6,6 +6,7 @@ public abstract class Gun : Item
 {
     // references
     private Transform firePoint;
+    private Transform EffectPoint;
     private InventoryHandler inventory;
 
     [Header("Fire Action")]

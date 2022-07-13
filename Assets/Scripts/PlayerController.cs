@@ -35,16 +35,16 @@ public class PlayerController : MonoBehaviour
         controls.FirstPersonStuff.Shoot.canceled += ctx => inventory.StopFireWeapon();
 
         // Update script on whether the player wants to alt-fire
-        controls.FirstPersonStuff.Aim.performed += ctx => inventory.StartAltFireWeapon();
-        controls.FirstPersonStuff.Aim.canceled += ctx => inventory.StopAltFireWeapon();
+        controls.FirstPersonStuff.Aim.performed += ctx => inventory.StartAltFireWeapon(isAimToggle);
+        controls.FirstPersonStuff.Aim.canceled += ctx => inventory.StopAltFireWeapon(isAimToggle);
 
         // Update script on whether the player wants to use equipment
         controls.FirstPersonStuff.Reload.performed += ctx => inventory.StartReload();
         controls.FirstPersonStuff.Reload.canceled += ctx => inventory.StopReload();
 
         // Update script on whether the player wants to swap weapons
-        controls.FirstPersonStuff.SwapWeapon.performed += ctx => inventory.StartSwappingWeapon(isAimToggle);
-        controls.FirstPersonStuff.SwapWeapon.canceled += ctx => inventory.StopSwappingWeapon(isAimToggle);
+        controls.FirstPersonStuff.SwapWeapon.performed += ctx => inventory.StartSwappingWeapon();
+        controls.FirstPersonStuff.SwapWeapon.canceled += ctx => inventory.StopSwappingWeapon();
 
         // Update script on whether the player wants to use equipment
         controls.FirstPersonStuff.SwapSidearm.performed += ctx => inventory.SwapToSidearm();

@@ -15,7 +15,7 @@ public abstract class Item : MonoBehaviour
 
     }
 
-    public virtual void Dropped()
+    public virtual void Drop()
     {
 
     }

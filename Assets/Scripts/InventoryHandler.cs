@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class InventoryHandler : MonoBehaviour
 {
+    [Header("Reference Points")]
+    [SerializeField] private Transform throwPoint;
+
     [Header("Weapons")]
     [SerializeField] private GameObject[] weapons = new GameObject[4]; // weapon1 = 0, weapon2 = 1, sidearm = 2, backup = 3
     private int activeWeapon;
@@ -19,12 +22,8 @@ public class InventoryHandler : MonoBehaviour
     private bool isHoldingReload = false;
 
     [Header("Grenades")]
-    [SerializeField] private GameObject fragObject;
-    [SerializeField] private GameObject moverObject;
-    [SerializeField] private GameObject causticObject;
-    [SerializeField] private int reserveFrag;
-    [SerializeField] private int reserveMover;
-    [SerializeField] private int reserveCaustic;
+    [SerializeField] private GameObject[] grenades = new GameObject[3]; // frag = 0, mover = 1, caustic = 2
+    [SerializeField] private int[] grenadeReserves = new int[3];
     private int activeGrenade;
 
     [Header("Equipment")]
@@ -59,11 +58,11 @@ public class InventoryHandler : MonoBehaviour
         Debug.Log("canSwap: " + canSwap);
 
         // find available grenades in inventory
-        if (reserveFrag > 0)
+        if (grenadeReserves[0] > 0)
             activeGrenade = 0;
-        else if (reserveMover > 0)
+        else if (grenadeReserves[1] > 0)
             activeGrenade = 1;
-        else if (reserveCaustic > 0)
+        else if (grenadeReserves[2] > 0)
             activeGrenade = 2;
         else
             activeGrenade = 3; // no selected grenade
@@ -185,12 +184,12 @@ public class InventoryHandler : MonoBehaviour
 
     }
 
-    public void DropWeapon()
+    public void Drop()
     {
 
     }
 
-    public void PickUpWeapon()
+    public void PickUp()
     {
 
     }
@@ -198,7 +197,23 @@ public class InventoryHandler : MonoBehaviour
     // 
     public void ThrowGrenade()
     {
+        // is there an active grenade
+        if (activeGrenade < 3)
+        {
+            // are there any grenades in reserves
+            if (grenadeReserves[activeGrenade] > 0)
+            {
+                // throw grenade
+                Instantiate(grenades[activeGrenade], throwPoint);
 
+                // remove grenade from reserves
+                grenadeReserves[activeGrenade] -= 1;
+
+                // swap grenade if current is empty
+                if (grenadeReserves[activeGrenade] <= 0)
+                    NextGrenade();
+            }
+        }
     }
 
     // switch to the next grenade or do nothing
@@ -208,35 +223,35 @@ public class InventoryHandler : MonoBehaviour
         switch (activeGrenade)
         {
             case 0:
-                if (reserveMover > 0) // next grenade
+                if (grenadeReserves[1] > 0) // next grenade
                     activeGrenade = 1;
-                else if (reserveCaustic > 0) // next, next grenade
+                else if (grenadeReserves[2] > 0) // next, next grenade
                     activeGrenade = 2;
-                else if (reserveFrag == 0) // no grenades
+                else if (grenadeReserves[0] == 0) // no grenades
                     activeGrenade = 3;
                 break;
             case 1:
-                if (reserveCaustic > 0) // next grenade
+                if (grenadeReserves[2] > 0) // next grenade
                     activeGrenade = 2;
-                else if (reserveFrag > 0) // next, next grenade
+                else if (grenadeReserves[0] > 0) // next, next grenade
                     activeGrenade = 0;
-                else if (reserveMover == 0) // no grenades
+                else if (grenadeReserves[1] == 0) // no grenades
                     activeGrenade = 3;
                 break;
             case 2:
-                if (reserveFrag > 0) // next grenade
+                if (grenadeReserves[0] > 0) // next grenade
                     activeGrenade = 0;
-                else if (reserveMover > 0) // next, next grenade
+                else if (grenadeReserves[1] > 0) // next, next grenade
                     activeGrenade = 1;
-                else if (reserveCaustic == 0) // no grenades
+                else if (grenadeReserves[2] == 0) // no grenades
                     activeGrenade = 3;
                 break;
             default:
-                if (reserveFrag > 0) // frag grenade
+                if (grenadeReserves[0] > 0) // frag grenade
                     activeGrenade = 0;
-                else if (reserveMover > 0) // mover charge
+                else if (grenadeReserves[1] > 0) // mover charge
                     activeGrenade = 1;
-                else if (reserveCaustic == 0) // caustic canister
+                else if (grenadeReserves[2] == 0) // caustic canister
                     activeGrenade = 2;
                 else
                     activeGrenade = 3; // no grenades
@@ -247,13 +262,17 @@ public class InventoryHandler : MonoBehaviour
     // throw equipment and remove reference in inventory
     public void ThrowEquipment()
     {
-        // throw equipment
+        if (hasEquipment)
+        {
+            // throw equipment
+            Instantiate(equipment, throwPoint);
 
-        // set equipment to null
-        equipment = null;
+            // set equipment to null
+            equipment = null;
 
-        // set hasEquipment to false
-        hasEquipment = false;
+            // set hasEquipment to false
+            hasEquipment = false;
+        }
     }
 
     // pick up equipment
